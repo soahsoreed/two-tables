@@ -1,0 +1,9 @@
+#prod-page_wrap .ant-tabs-nav {
+    padding: 0 24px !important;
+    margin: 0;
+;
+}
+
+#prod-page_wrap .ant-tabs-content {
+    height: 100%;
+}

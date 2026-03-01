@@ -1,0 +1,8 @@
+#register_wrap .ant-tabs-nav {
+    padding: 0 24px !important;
+    margin: 0;
+}
+
+/*.ant-modal-content {*/
+/*    width: fit-content;*/
+/*}*/

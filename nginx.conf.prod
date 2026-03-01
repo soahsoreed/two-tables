@@ -1,0 +1,30 @@
+#Конфиг с прода
+
+server {
+    server_name ariadna.satel.org;
+    listen 80;
+    listen 443 ssl;
+
+    ssl_certificate /etc/nginx/ssl/ariadna.satel.org.cer;
+    ssl_certificate_key /etc/nginx/ssl/ariadna.satel.org.key;
+
+    location / {
+        proxy_pass http://localhost:5050;
+}
+
+    location /v1/graphql {
+        proxy_pass http://localhost:8080/v1/graphql;
+    }
+}
+
+server {
+    server_name wiki.ariadna.satel.org;
+    listen 80;
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/ariadna.satel.org.cer;
+    ssl_certificate_key /etc/nginx/ssl/ariadna.satel.org.key;
+
+    location / {
+        proxy_pass http://localhost:81; # Порт, на котором работает ваш WikiJS
+    }
+}

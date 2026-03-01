@@ -1,0 +1,10 @@
+@import 'src/assets/styles/app-variables.scss';
+
+$content-padding: 16px;
+
+.handbooks-page {
+  width: 100%;
+  height: calc(100vh - 145px);
+  //overflow-y: scroll;
+  background-color: $gray-100;
+}
