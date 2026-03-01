@@ -1,8 +1,29 @@
-#register_wrap .ant-tabs-nav {
-    padding: 0 24px !important;
-    margin: 0;
+.main-page__container {
+  width: 100%;
+  height: 100%;
+  background-color: lightblue;
+  min-height: 100vh;
 }
 
-/*.ant-modal-content {*/
-/*    width: fit-content;*/
-/*}*/
+.main-page__flex-container {
+  display: flex;
+  background-color: lightgoldenrodyellow;
+}
+
+.main-page__left, .main-page__right {
+  width: 50%;
+  border: 1px solid black;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Collapses double borders into a single border */
+  table-layout: fixed;
+  overflow-wrap: break-word;
+}
+
+table, th, td {
+  border: 1px solid black;
+}

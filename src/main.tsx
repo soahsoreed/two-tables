@@ -24,13 +24,9 @@ const App = () => {
   const routes = [];
   const guestRouter = [
     {
-      path: '/login',
-      element: <LoginPage />,
-      // errorElement: <ErrorPage />,
-    },
-    {
       path: '/',
-      element: <LoginPage />,
+      // element: <LoginPage />,
+      element: <RegistryPage />,
       // errorElement: <ErrorPage />,
     },
     {
@@ -44,11 +40,6 @@ const App = () => {
       element: <Layout />,
       errorElement: <ErrorPage />,
       children: [
-        {
-          path: '/main',
-          // index: true,
-          element: <StatisticsPage/>,
-        },
         {
           path: '/registry/',
           element: <RegistryPage/>,
@@ -120,22 +111,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       }
     }}>
       <ApolloProvider client={client}>
-        {/*<BrowserRouter>*/}
-        {/*  <Layout>*/}
-        {/*<Routes>*/}
-        {/*  {*/}
-        {/*    appRoutes.map((route, index) => (*/}
-        {/*      <Route*/}
-        {/*        key={index}*/}
-        {/*        path={route.path}*/}
-        {/*        Component={route.Component}*/}
-        {/*      />*/}
-        {/*    ))*/}
-        {/*  }*/}
-        {/*</Routes>*/}
         <App />
-        {/*</Layout>*/}
-        {/*</BrowserRouter>*/}
       </ApolloProvider>
     </ConfigProvider>
   </React.StrictMode>,

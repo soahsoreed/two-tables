@@ -122,31 +122,63 @@ function RegistryPage() {
     </Button>
   </Flex>
 
-  const items: TabsProps['items'] = [
+  const items = [
     {
-      key: '1',
-      label: 'Все',
-      children:  <TableRegistryAll filter={'normal'} />,
+      id: 1,
+      name: 'Item 1',
+      isSelected: false
     },
     {
-      key: '2',
-      label: 'Проекты',
-      children:  <TableRegistryAll filter={'project'}/>,
+      id: 2,
+      name: 'Item 2',
+      isSelected: true
     },
     {
-      key: '3',
-      label: 'Продукты',
-      children:  <TableRegistryAll filter={'product'}/>,
+      id: 3,
+      name: 'Item 3',
+      isSelected: false
     },
   ];
 
   return (
-    <Flex vertical id={'register_wrap'} style={{width:'100%', height: 'calc(100vh - 145px )', overflowY: 'scroll'}}>
-      <Tabs style={{ background: '#fff', width: '100%'}} tabBarExtraContent={addButton} items={items} />
-      {/*<Tabs style={{padding: '0 24px', background: '#fff', width: '100%'}} tabBarExtraContent={addButton} items={items} />*/}
-      <CreateNewRegisterDataModal />
-      {/*{registerFilterText}*/}
-    </Flex>
+      <div className="main-page__container">
+
+        <div className="main-page__flex-container">
+          <div className="main-page__left">
+            <table>
+              <thead>
+                <tr>
+                  <th>Is Selected?</th>
+                  <th>Item ID</th>
+                  <th>Item Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                { items.map(item => {
+                  return (
+                    <tr>
+                      <td> { item.isSelected } </td>
+                      <td> { item.id } </td>
+                      <td> { item.name } </td>
+                      <td>
+                        <Button>Sort</Button>
+                      </td>
+                    </tr>
+                  )
+                }) }
+              </tbody>
+            </table>
+          </div>
+
+          <div className="main-page__right">
+            Right
+          </div>
+        </div>
+
+      </div>
+    // </Flex>
   )
 }
 
