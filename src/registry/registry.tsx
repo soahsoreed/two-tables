@@ -8,6 +8,7 @@ import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {getRefreshToken} from "../auth/token-access.ts";
 import { items } from "./items.ts";
+import ItemsTable from "./components/ItemsTable/ItemsTable.tsx";
 
 function RegistryPage() {
   const { notification } = App.useApp();
@@ -74,7 +75,7 @@ function RegistryPage() {
             </div>
 
             <div className="main-page__left-table">
-              <table>
+              {/* <table>
                 <thead>
                   <tr>
                     <th>Is Selected?</th>
@@ -100,7 +101,10 @@ function RegistryPage() {
                     )
                   }) }
                 </tbody>
-              </table>
+              </table> */}
+
+
+              <ItemsTable dataSource={itemsByQuery}></ItemsTable>
             </div>
 
            
