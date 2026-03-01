@@ -1,4 +1,4 @@
-import {App, Button, Flex, Tabs, TabsProps} from "antd";
+import {App, Button, Flex, Input } from "antd";
 import {PlusOutlined, RedoOutlined} from "@ant-design/icons";
 import TableRegistryAll from "./model/TableRegistryAll.tsx";
 import CreateNewRegisterDataModal from "./model/modals/CreateNewRegisterDataModal.tsx";
@@ -9,6 +9,7 @@ import {defaultRegisterFilterObject, useRegisterFilters} from "../components/sto
 import {useAuth} from "../authStore.ts";
 import {useNavigate} from "react-router-dom";
 import {getRefreshToken} from "../auth/token-access.ts";
+import { items } from "./items.ts";
 
 function RegistryPage() {
   const { notification, } = App.useApp();
@@ -99,77 +100,59 @@ function RegistryPage() {
 
   }, [ error ])
 
-
-
-  const addButton = <Flex style={{padding:'8px 0'}} gap={8}>
-    <Button type={'primary'}
-      onClick={() => setCreatingRegisterDataModalOpen(true)}
-      style={{height: '36px'}}>Добавить<PlusOutlined /></Button>
-    <Button
-      style={{height: '36px'}}
-      onClick={() => {
-        try {
-          setRegisterFilterObject(defaultRegisterFilterObject)
-        } finally {
-          location.reload()
-        }
-
-      }}
-      // style={{border: "none", background: 'transparent', boxShadow: 'none'}}
-    >
-      <RedoOutlined style={{fontSize: '16px'}} />
-      Сброс фильтров
-    </Button>
-  </Flex>
-
-  const items = [
-    {
-      id: 1,
-      name: 'Item 1',
-      isSelected: false
-    },
-    {
-      id: 2,
-      name: 'Item 2',
-      isSelected: true
-    },
-    {
-      id: 3,
-      name: 'Item 3',
-      isSelected: false
-    },
-  ];
+ 
 
   return (
       <div className="main-page__container">
 
         <div className="main-page__flex-container">
           <div className="main-page__left">
-            <table>
-              <thead>
-                <tr>
-                  <th>Is Selected?</th>
-                  <th>Item ID</th>
-                  <th>Item Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
 
-              <tbody>
-                { items.map(item => {
-                  return (
-                    <tr>
-                      <td> { item.isSelected } </td>
-                      <td> { item.id } </td>
-                      <td> { item.name } </td>
-                      <td>
-                        <Button>Sort</Button>
-                      </td>
-                    </tr>
-                  )
-                }) }
-              </tbody>
-            </table>
+            <div className="main-page__left-actions">
+              <div className="main-page__left-actions-search">
+                <Input
+                  type='text'
+                  id="search-input">
+                  </Input>
+              </div>
+
+              <div className="main-page__left-actions-add">
+                <Button>Add</Button>
+              </div>
+              
+            </div>
+
+            <div className="main-page__left-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Is Selected?</th>
+                    <th>
+                      <span className='th-text'>Item ID</span>
+                      <Button>Sort</Button>
+                    </th>
+                    <th>
+                      <span className='th-text'>Item Name</span>
+                      <Button>Sort</Button>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  { items.map(item => {
+                    return (
+                      <tr>
+                        <td> { String(item.isSelected) } </td>
+                        <td> { item.id } </td>
+                        <td> { item.name } </td>
+                      </tr>
+                    )
+                  }) }
+                </tbody>
+              </table>
+            </div>
+
+           
           </div>
 
           <div className="main-page__right">

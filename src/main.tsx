@@ -8,15 +8,13 @@ import Layout from './layout/layout.tsx';
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import {useAuth} from "./authStore.ts";
-import LoginPage from "./auth/login-page/LoginPage.tsx";
 import ErrorPage from "./page-not-found/ErrorPage.tsx";
-import StatisticsPage from "./statistics/statistics.tsx";
 import RegistryPage from "./registry/registry.tsx";
 import HandbooksPage from "./handbooks/handbooks-page.tsx";
 import DocumentTemplatesPage from "./document-templates/document-templates.tsx";
 import ProdtPage from "./product__project-page/ProdtPage.tsx";
+import PageNotFound from './page-not-found/page-not-found-.tsx';
 // import PageForbidden from "./page-forbidden/page-forbidden.tsx";
-// import PageNotFound from "./page-not-found/page-not-found-.tsx";
 
 const App = () => {
   // @ts-ignore
@@ -31,7 +29,7 @@ const App = () => {
     },
     {
       path: '*',
-      element: <LoginPage />,
+      element: <PageNotFound />,
     },
   ];
   const authRouter = [

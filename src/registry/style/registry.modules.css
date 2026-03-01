@@ -7,7 +7,7 @@
 
 .main-page__flex-container {
   display: flex;
-  background-color: lightgoldenrodyellow;
+  background-color: lightgrey;
 }
 
 .main-page__left, .main-page__right {
@@ -26,4 +26,24 @@ table {
 
 table, th, td {
   border: 1px solid black;
+}
+
+.th-text {
+  margin-right: 8px;
+}
+
+.main-page__left-actions {
+  display: flex;
+  padding: 8px;
+}
+
+.main-page__left-actions-search {
+  width: calc(100% - 60px);
+  margin-right: 8px;
+}
+
+.main-page__left-actions-add {
+  width: 54px + 6px;
+  display: flex;
+  justify-content: flex-end;
 }
