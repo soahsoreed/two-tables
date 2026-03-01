@@ -4,103 +4,51 @@ import TableRegistryAll from "./model/TableRegistryAll.tsx";
 import CreateNewRegisterDataModal from "./model/modals/CreateNewRegisterDataModal.tsx";
 import {useModals, useRegister} from "../store.ts";
 import './style/registry.modules.css'
-import React, {useEffect} from "react";
-import {defaultRegisterFilterObject, useRegisterFilters} from "../components/store/useFiltersStore.ts";
-import {useAuth} from "../authStore.ts";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {getRefreshToken} from "../auth/token-access.ts";
 import { items } from "./items.ts";
 
 function RegistryPage() {
-  const { notification, } = App.useApp();
-  const navigate = useNavigate()
-  const {logOut} = useAuth()
-  const { setCreatingRegisterDataModalOpen } = useModals((state) => ({
-    setCreatingRegisterDataModalOpen: state.setCreatingRegisterDataModalOpen,
-  }));
-  const { setRegisterFilterObject}  = useRegisterFilters()
+  const { notification } = App.useApp();
+  const navigate = useNavigate();
 
-  // Register Data
-  const {
-    getRegisterData,
-    getDealsData,
-    getOrganizationsData,
-    getGostsData,
-    getManagersData,
-    getContractsData,
-    successMessage,
-    isSuccessUses,
-    setSuccessMessage,
-    setIsSuccessUses,
-    error,
-    setError
-  } = useRegister();
+  let [_items, setItems] = useState([]);
+  let [itemsByQuery, setItemsByQuery] = useState([]);
+  let [query, setQuery] = useState('');
 
   useEffect(() => {
-    getRegisterData()
-    getDealsData()
-    getOrganizationsData()
-    getGostsData()
-    getManagersData()
-    getContractsData()
+    const __items = fetchItems()
+    setItems(__items);
   }, []);
 
   useEffect(() => {
-    if (!getRefreshToken) {
-      try {
-        logOut()
-      } catch (_) {
-        return
-      } finally {
-        navigate('/login')
-      }
-    }
-  }, []);
+    const itemsByQuery = searchByQuery(query, _items);
+    debugger
+    setItemsByQuery(itemsByQuery);
+  }, [query, _items]);
 
+  const fetchItems = () => {
+    return items;
+  }
 
-  const openSuccessNotification = (description: string,) => {
-    getRegisterData();
-    notification.success({
-      message: null,
-      className: 'addGroupNotification',
-      placement: 'bottom',
-      // message: 'Успешно!',
-      description: description,
-      duration: 1.5,
-      style: {
-        width: '353px',
-      },
-      onClose: () => {
-        setSuccessMessage(null,);
-        setIsSuccessUses(false,);
-      }
-    },);
-  };
+  const setQueryEvent = (e) => {
+    setQuery(
+      e.target.value
+    );
+  }
 
-  useEffect(() => {
-    if (successMessage && !isSuccessUses) {
-      setIsSuccessUses(true,);
-      openSuccessNotification(successMessage,);
-    }
-  }, [ successMessage, isSuccessUses, ],);
+  const searchByQuery = (query: string, items: any[]) => {
+    const normalizeText = (text: string) => (text ?? '').trim().toLowerCase();
+    const queryNormalized = normalizeText(query);
 
-  const showErrorNotification = (error: string,) => {
-    notification.error({
-      message: 'Ошибка!',
-      description: error,
-      placement:'bottom',
-      onClose: () => setError(null,),
-    },);
-  };
+    const result = items.filter(item => {
+      const nameNormalized = normalizeText(item.name);
+      return nameNormalized.includes(queryNormalized);
+    });
 
-  useEffect(() => {
-    if (typeof error === 'string') {
-      showErrorNotification(error)
-    }
-
-  }, [ error ])
-
- 
+    return result;
+  }
 
   return (
       <div className="main-page__container">
@@ -112,12 +60,15 @@ function RegistryPage() {
               <div className="main-page__left-actions-search">
                 <Input
                   type='text'
-                  id="search-input">
+                  id="search-input"
+                  onChange={setQueryEvent}>
                   </Input>
               </div>
 
               <div className="main-page__left-actions-add">
-                <Button>Add</Button>
+                <Button title='Добавить запись'>
+                  <PlusOutlined />
+                </Button>
               </div>
               
             </div>
@@ -139,9 +90,9 @@ function RegistryPage() {
                 </thead>
 
                 <tbody>
-                  { items.map(item => {
+                  { itemsByQuery.map(item => {
                     return (
-                      <tr>
+                      <tr key={item.id}>
                         <td> { String(item.isSelected) } </td>
                         <td> { item.id } </td>
                         <td> { item.name } </td>
@@ -161,7 +112,6 @@ function RegistryPage() {
         </div>
 
       </div>
-    // </Flex>
   )
 }
 
