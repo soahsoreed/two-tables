@@ -25,8 +25,14 @@ table {
   overflow-wrap: break-word;
 }
 
-table, th, td {
-  border: 1px solid black;
+table th, table td {
+  border: 1px solid silver;
+  padding: 16px;
+  background-color: white;
+}
+
+table tr:hover td {
+  background-color: #fafafa;
 }
 
 table tr, table th {
