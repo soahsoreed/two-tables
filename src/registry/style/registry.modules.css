@@ -48,6 +48,7 @@ table tr, table th {
   margin-right: 8px;
 }
 
+
 .main-page__left-actions-add {
   width: 54px + 6px;
   display: flex;
@@ -63,10 +64,11 @@ table tr, table th {
   height: 100% !important;
 }
 
-.table-container th {
+.table-container table th {
   /* Make the header sticky */
+  /* position: sticky; */
   position: sticky;
-  top: 0; /* Stick to the top of its scrolling container */
+  top: 50; /* Stick to the top of its scrolling container */
   background-color: #f2f2f2; /* Optional: adds a background so content doesn't show through */
   z-index: 10; /* Optional: ensures the header is above other table content */
 }

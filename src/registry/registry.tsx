@@ -1,4 +1,4 @@
-import {App, Button, Flex, Input } from "antd";
+import {App, Button, Checkbox, Flex, Input } from "antd";
 import {PlusOutlined, RedoOutlined} from "@ant-design/icons";
 import TableRegistryAll from "./model/TableRegistryAll.tsx";
 import CreateNewRegisterDataModal from "./model/modals/CreateNewRegisterDataModal.tsx";
@@ -16,25 +16,21 @@ function RegistryPage() {
   const navigate = useNavigate();
 
   let [_items, setItems] = useState([]);
-  // let [itemsByQuery, setItemsByQuery] = useState([]);
+  let [itemsByQuery, setItemsByQuery] = useState([]);
   let [query, setQuery] = useState('');
 
   useEffect(() => {
-    const __items = fetchItems()
-    setItems(__items);
+    fetchItems()
   }, []);
 
   useEffect(() => {
     const itemsByQuery = searchByQuery(query, _items);
-    // debugger
-    console.log('itemsByQuery', itemsByQuery)
-    // setItemsByQuery(itemsByQuery);
+    setItemsByQuery(itemsByQuery);
   }, [query, _items]);
 
   const fetchItems = (startIndex = 0, lastIndex = 20) => {
     const newElements = items.slice(startIndex, lastIndex);
     const newItems = [..._items, ...newElements];
-    console.log('newItems', newItems);
     setItems(newItems);
     return newItems;
   }
@@ -49,12 +45,22 @@ function RegistryPage() {
     const normalizeText = (text: string) => (text ?? '').trim().toLowerCase();
     const queryNormalized = normalizeText(query);
 
-    const result = items.filter(item => {
+    const result = _items.filter(item => {
       const nameNormalized = normalizeText(item.name);
       return nameNormalized.includes(queryNormalized);
     });
 
     return result;
+  }
+
+  const toggleSelection = (item) => {
+    const newValue = !item.isSelected;
+
+    setItemsByQuery(
+      itemsByQuery.map(e =>
+        e.id === item.id ? { ...e, isSelected: newValue } : e
+      )
+    );
   }
 
   return (
@@ -80,46 +86,54 @@ function RegistryPage() {
               
             </div>
 
-            <div className="main-page__left-table tableContainer" id='scrollable-div'>
+            <div className="main-page__left-table table-container" id='scrollable-div'>
               <InfiniteScroll
-                    // dataLength={itemsByQuery.length}
                     dataLength={_items?.length}
                     next={() => fetchItems(_items?.length || 0, (_items?.length + 20))}
                     hasMore={true}
-                    loader={<h4>Loading...</h4>}
+                    // loader={<h4>Loading...</h4>}
+                    loader={<div></div>}
                     scrollableTarget="scrollable-div"
-                    >
+                  >
                       
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Is Selected?</th>
-                      <th>
-                        <span className='th-text'>Item ID</span>
-                        <Button>Sort</Button>
-                      </th>
-                      <th>
-                        <span className='th-text'>Item Name</span>
-                        <Button>Sort</Button>
-                      </th>
-                    </tr>
-                  </thead>
+                  <div className="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Is Selected?</th>
+                          <th>
+                            <span className='th-text'>Item ID</span>
+                            <Button>Sort</Button>
+                          </th>
+                          <th>
+                            <span className='th-text'>Item Name</span>
+                            <Button>Sort</Button>
+                          </th>
+                        </tr>
+                      </thead>
 
-                  <tbody>
-                    
-                        {/* { itemsByQuery.map(item => { */}
-                        { _items.map(item => {
-                          return (
-                            <tr key={item.id}>
-                              <td> { String(item.isSelected) } </td>
-                              <td> { item.id } </td>
-                              <td> { item.name } </td>
-                            </tr>
-                          )
-                        }) }
-                      {/* </InfiniteScroll> */}
-                  </tbody>
-                </table>
+                      <tbody>
+                        
+                            { itemsByQuery.map(item => {
+                              return (
+                                <tr key={item.id}>
+                                  {/* <td> { String(item.isSelected) } </td> */}
+                                  <td>
+                                    { <Checkbox 
+                                        checked={item.isSelected}
+                                        onChange={ () => toggleSelection(item) }>
+                                      </Checkbox> 
+                                    } 
+                                  </td>
+                                  <td> { item.id } </td>
+                                  <td> { item.name } </td>
+                                </tr>
+                              )
+                            }) }
+                          {/* </InfiniteScroll> */}
+                      </tbody>
+                    </table>
+                  </div>
               </InfiniteScroll>
 
                {/* <InfiniteScroll
