@@ -7,26 +7,47 @@ import './style/registry.modules.css'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import { items } from "./items.ts";
-import ItemsTable from "./components/ItemsTable/ItemsTable.tsx";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { CgLayoutGrid } from "react-icons/cg";
 
 function RegistryPage() {
   const { notification } = App.useApp();
   const navigate = useNavigate();
 
-  let [_items, setItems] = useState([]);
-  let [itemsByQuery, setItemsByQuery] = useState([]);
-  let [query, setQuery] = useState('');
+  const [_items, setItems] = useState([]);
+
+  const [unselectedItems, setUnselectedItems] = useState([]);
+  const [itemsByQueryUnselected, setItemsByQueryUnselected] = useState([]);
+  const [queryUnselected, setQueryUnselected] = useState('');
+
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [itemsByQuerySelected, setItemsByQuerySelected] = useState([]);
+  const [querySelected, setQuerySelected] = useState('');
 
   useEffect(() => {
-    fetchItems()
+    fetchItems();
   }, []);
 
   useEffect(() => {
-    const itemsByQuery = searchByQuery(query, _items);
-    setItemsByQuery(itemsByQuery);
-  }, [query, _items]);
+    const selected = _items.filter(item => item.isSelected);
+    const unselected = _items.filter(item => !item.isSelected);
+    setSelectedItems(selected);
+    setUnselectedItems(unselected);
+    debugger
+  }, [_items]);
+
+  useEffect(() => {
+    const itemsByQuery = searchByQuery(queryUnselected, unselectedItems);
+    setItemsByQueryUnselected(itemsByQuery);
+  }, [queryUnselected, unselectedItems]);
+
+  useEffect(() => {
+    const itemsByQuery = searchByQuery(querySelected, selectedItems);
+    setItemsByQuerySelected(itemsByQuery);
+  }, [querySelected, selectedItems]);
+
+  // useEffect(() => {
+  //   fetchSelectedItems();
+  // }, [itemsByQueryUnselected]);
 
   const fetchItems = (startIndex = 0, lastIndex = 20) => {
     const newElements = items.slice(startIndex, lastIndex);
@@ -35,17 +56,42 @@ function RegistryPage() {
     return newItems;
   }
 
+  // const syncSelection = () => {
+  //   const selected = itemsByQueryUnselected.filter(it => it.isSelected);
+
+  //   const res = _items.map(it => {
+  //     return {
+  //       ...it,
+  //       isSelected: selected.includes(it.id)
+  //     }
+  //   });
+
+  //   return res;
+  // }
+
+  // const fetchSelectedItems = () => {
+  //   const newItems = itemsByQueryUnselected.filter(item => item.isSelected);
+  //   setSelectedItems(newItems);
+  //   return newItems;
+  // }
+
   const setQueryEvent = (e) => {
-    setQuery(
+    setQueryUnselected(
       e.target.value
     );
   }
+
+  // const setQueryEvent = (e) => {
+  //   setQueryUnselected(
+  //     e.target.value
+  //   );
+  // }
 
   const searchByQuery = (query: string, items: any[]) => {
     const normalizeText = (text: string) => (text ?? '').trim().toLowerCase();
     const queryNormalized = normalizeText(query);
 
-    const result = _items.filter(item => {
+    const result = items.filter(item => {
       const nameNormalized = normalizeText(item.name);
       return nameNormalized.includes(queryNormalized);
     });
@@ -56,12 +102,22 @@ function RegistryPage() {
   const toggleSelection = (item) => {
     const newValue = !item.isSelected;
 
-    setItemsByQuery(
-      itemsByQuery.map(e =>
-        e.id === item.id ? { ...e, isSelected: newValue } : e
-      )
+    const newItems = _items.map(e =>
+      e.id === item.id ? { ...e, isSelected: newValue } : e
     );
+
+    setItems(newItems);
   }
+
+  // const toggleSelectionRight = (item) => {
+  //   const newValue = !item.isSelected;
+
+  //   const newItems = itemsByQuerySelected.map(e =>
+  //     e.id === item.id ? { ...e, isSelected: newValue } : e
+  //   );
+
+  //   setItemsByQuerySelected(newItems);
+  // }
 
   return (
       <div className="main-page__container">
@@ -74,7 +130,7 @@ function RegistryPage() {
                 <Input
                   type='text'
                   id="search-input"
-                  onChange={setQueryEvent}>
+                  onChange={(e) => setQueryUnselected(e.target.value)}>
                   </Input>
               </div>
 
@@ -114,7 +170,65 @@ function RegistryPage() {
 
                       <tbody>
                         
-                            { itemsByQuery.map(item => {
+                            { itemsByQueryUnselected.map(item => {
+                              return (
+                                <tr key={item.id}>
+                                  <td>
+                                    { <Checkbox 
+                                        checked={item.isSelected}
+                                        onChange={ () => toggleSelection(item) }>
+                                      </Checkbox> 
+                                    } 
+                                  </td>
+                                  <td> { item.id } </td>
+                                  <td> { item.name } </td>
+                                </tr>
+                              )
+                            }) }
+                      </tbody>
+                    </table>
+                  </div>
+              </InfiniteScroll>
+
+            </div>
+
+           
+          </div>
+
+          <div className="main-page__right">
+            <div className="main-page__left-actions">
+
+            </div>
+
+            <div className="main-page__left-table table-container" id='scrollable-div-2'>
+               <InfiniteScroll
+                    dataLength={selectedItems?.length}
+                    next={() => fetchItems(_items?.length || 0, (_items?.length + 20))}
+                    hasMore={true}
+                    // loader={<h4>Loading...</h4>}
+                    loader={<div></div>}
+                    scrollableTarget="scrollable-div-2"
+                  >
+                      
+                  <div className="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Is Selected?</th>
+                          <th>
+                            <span className='th-text'>Item ID</span>
+                            <Button>Sort</Button>
+                          </th>
+                          <th>
+                            <span className='th-text'>Item Name</span>
+                            <Button>Sort</Button>
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        
+                            { itemsByQuerySelected.map(item => {
                               return (
                                 <tr key={item.id}>
                                   {/* <td> { String(item.isSelected) } </td> */}
@@ -135,29 +249,8 @@ function RegistryPage() {
                     </table>
                   </div>
               </InfiniteScroll>
-
-               {/* <InfiniteScroll
-                  dataLength={itemsByQuery.length}
-                  next={() => fetchItems(itemsByQuery?.length || 0, (itemsByQuery?.length || 0 + 20))}
-                  hasMore={true}
-                  loader={<h4>Loading...</h4>}
-                  scrollableTarget="scrollableDiv"
-                >
-                {itemsByQuery.map((i, index) => (
-                  <div 
-                  // style={style} 
-                  key={index}>
-                    div - #{index}
-                  </div>
-                ))} */}
-          {/* </InfiniteScroll> */}
             </div>
-
-           
-          </div>
-
-          <div className="main-page__right">
-            Right
+            
           </div>
         </div>
 
