@@ -73,7 +73,7 @@ function RegistryPage() {
               
             </div>
 
-            <div className="main-page__left-table">
+            <div className="main-page__left-table table-container">
               {/* <ItemsTable dataSource={itemsByQuery}></ItemsTable> */}
               <table>
                 <thead>

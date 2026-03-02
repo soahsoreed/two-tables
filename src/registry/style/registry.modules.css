@@ -62,3 +62,11 @@ table tr, table th {
 .ant-app {
   height: 100% !important;
 }
+
+.table-container th {
+  /* Make the header sticky */
+  position: sticky;
+  top: 0; /* Stick to the top of its scrolling container */
+  background-color: #f2f2f2; /* Optional: adds a background so content doesn't show through */
+  z-index: 10; /* Optional: ensures the header is above other table content */
+}
