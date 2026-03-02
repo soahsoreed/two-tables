@@ -6,7 +6,6 @@ import {useModals, useRegister} from "../store.ts";
 import './style/registry.modules.css'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {getRefreshToken} from "../auth/token-access.ts";
 import { items } from "./items.ts";
 import ItemsTable from "./components/ItemsTable/ItemsTable.tsx";
 
@@ -75,35 +74,6 @@ function RegistryPage() {
             </div>
 
             <div className="main-page__left-table">
-              {/* <table>
-                <thead>
-                  <tr>
-                    <th>Is Selected?</th>
-                    <th>
-                      <span className='th-text'>Item ID</span>
-                      <Button>Sort</Button>
-                    </th>
-                    <th>
-                      <span className='th-text'>Item Name</span>
-                      <Button>Sort</Button>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  { itemsByQuery.map(item => {
-                    return (
-                      <tr key={item.id}>
-                        <td> { String(item.isSelected) } </td>
-                        <td> { item.id } </td>
-                        <td> { item.name } </td>
-                      </tr>
-                    )
-                  }) }
-                </tbody>
-              </table> */}
-
-
               <ItemsTable dataSource={itemsByQuery}></ItemsTable>
             </div>
 

@@ -52,7 +52,14 @@ const ItemsTable: React.FC = ({ dataSource }) => {
         </Button>
         {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
       </Flex>
-      <Table<DataType> rowSelection={rowSelection} columns={columns} dataSource={dataSourceWithKeys} />
+      <Table<DataType> 
+        rowSelection={rowSelection} 
+        columns={columns} 
+        pagination={{ 
+          position: ['bottomRight'],
+          
+         }}
+        dataSource={dataSourceWithKeys} />
     </Flex>
   );
 };

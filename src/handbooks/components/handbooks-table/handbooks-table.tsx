@@ -46,7 +46,10 @@ function HandbookTable ({ tableColumns, title, dataSource }: ITableProps) {
         // rowKey={(record) => record.login.uuid}
         // dataSource={registryData}
         dataSource={dataSource}
-        pagination={{showSizeChanger: true}}
+        pagination={{
+          showSizeChanger: true,
+          position: ['bottomCenter']
+        }}
       />
     </ConfigProvider>
   );
