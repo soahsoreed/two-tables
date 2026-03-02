@@ -6,6 +6,7 @@
 }
 
 .main-page__flex-container {
+  height: 100%;
   display: flex;
   background-color: lightgrey;
 }
@@ -28,6 +29,10 @@ table, th, td {
   border: 1px solid black;
 }
 
+table tr, table th {
+  height: 40px;
+}
+
 .th-text {
   margin-right: 8px;
 }
@@ -35,6 +40,7 @@ table, th, td {
 .main-page__left-actions {
   display: flex;
   padding: 8px;
+  height: 50px;
 }
 
 .main-page__left-actions-search {
@@ -46,4 +52,13 @@ table, th, td {
   width: 54px + 6px;
   display: flex;
   justify-content: flex-end;
+}
+
+.main-page__left-table {
+  overflow-y: auto;
+  height: calc(100% - 50px);
+}
+
+.ant-app {
+  height: 100% !important;
 }

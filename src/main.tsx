@@ -105,8 +105,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         },
         DatePicker: {
 
-        }
-      }
+        },
+      },
     }}>
       <ApolloProvider client={client}>
         <App />

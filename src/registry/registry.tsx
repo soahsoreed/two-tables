@@ -74,7 +74,34 @@ function RegistryPage() {
             </div>
 
             <div className="main-page__left-table">
-              <ItemsTable dataSource={itemsByQuery}></ItemsTable>
+              {/* <ItemsTable dataSource={itemsByQuery}></ItemsTable> */}
+              <table>
+                <thead>
+                  <tr>
+                    <th>Is Selected?</th>
+                    <th>
+                      <span className='th-text'>Item ID</span>
+                      <Button>Sort</Button>
+                    </th>
+                    <th>
+                      <span className='th-text'>Item Name</span>
+                      <Button>Sort</Button>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  { itemsByQuery.map(item => {
+                    return (
+                      <tr key={item.id}>
+                        <td> { String(item.isSelected) } </td>
+                        <td> { item.id } </td>
+                        <td> { item.name } </td>
+                      </tr>
+                    )
+                  }) }
+                </tbody>
+              </table>
             </div>
 
            
