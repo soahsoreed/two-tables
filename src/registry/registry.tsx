@@ -1,12 +1,10 @@
 import {App, Button, Checkbox, Flex, Input } from "antd";
-import {PlusOutlined, RedoOutlined} from "@ant-design/icons";
-import CreateNewRegisterDataModal from "./model/modals/CreateNewRegisterDataModal.tsx";
-import {useModals, useRegister} from "../store.ts";
-import './style/registry.modules.css'
-import React, {useEffect, useState} from "react";
+import {PlusOutlined, SearchOutlined, ArrowUpOutlined, ArrowDownOutlined} from "@ant-design/icons";
+import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import { items } from "./items.ts";
 import InfiniteScroll from "react-infinite-scroll-component";
+import './style/registry.modules.css'
 
 function RegistryPage() {
   const { notification } = App.useApp();
@@ -22,6 +20,14 @@ function RegistryPage() {
   const [itemsByQuerySelected, setItemsByQuerySelected] = useState([]);
   const [querySelected, setQuerySelected] = useState('');
 
+  const [leftSortDirection, setLeftSortDirection] = useState(null);
+  const [leftSortField, setLeftSortField] = useState(null);
+
+  const [rightSortDirection, setRightSortDirection] = useState(null);
+  const [rightSortField, setRightSortField] = useState(null);
+
+   const inputRef = useRef(null);
+
   useEffect(() => {
     fetchItems();
   }, []);
@@ -31,8 +37,12 @@ function RegistryPage() {
     const unselected = _items.filter(item => !item.isSelected);
     setSelectedItems(selected);
     setUnselectedItems(unselected);
-    debugger
   }, [_items]);
+
+  useEffect(() => {
+    const sorted = sortBy(leftSortDirection, leftSortField, itemsByQueryUnselected);
+    setUnselectedItems(sorted);
+  }, [leftSortDirection, leftSortField]);
 
   useEffect(() => {
     const itemsByQuery = searchByQuery(queryUnselected, unselectedItems);
@@ -63,6 +73,19 @@ function RegistryPage() {
     return result;
   }
 
+ const sortBy = (direction = 'dec', fieldName, items) => {
+    const sorted = items.toSorted((a, b) => {
+      const nameA = String(a[fieldName]).trim().toUpperCase();
+      const nameB = String(b[fieldName]).trim().toUpperCase();
+
+      const sortDec = () => nameA > nameB ? -1 : 1;
+      const sortAcs = () => nameA > nameB ? 1 : -1;
+      return direction === 'dec' ? sortDec() : sortAcs();
+    });
+
+    return sorted;
+  }
+
   const toggleSelection = (item) => {
     const newValue = !item.isSelected;
 
@@ -71,6 +94,46 @@ function RegistryPage() {
     );
 
     setItems(newItems);
+  }
+
+  const toggleSortLeft = (fieldName: string) => {
+    setLeftSortField(fieldName);
+
+    const newSortDirection = leftSortDirection === 'dec' ? 'acc' : 'dec';
+
+    if (newSortDirection !== leftSortDirection) {
+      setLeftSortDirection(newSortDirection);
+    }
+  }
+
+  const toggleSortRight = (fieldName: string) => {
+    setRightSortField(fieldName);
+
+    const newSortDirection = leftSortDirection === 'dec' ? 'acc' : 'dec';
+
+    if (newSortDirection !== leftSortDirection) {
+      setRightSortDirection(newSortDirection);
+    }
+  }
+
+  const getLeftSortIcon = () => {
+    if (leftSortDirection === 'dec') {
+      return <ArrowDownOutlined />
+    } else {
+      return <ArrowUpOutlined />
+    }
+  }
+
+  const setLeftInputValue = () => {
+    const input = inputRef.current.input as HTMLInputElement;
+    const value = input.value;
+    setQueryUnselected(value);
+  }
+
+  const clearQueryIfClearPressed = (query: string) => {
+    if (!query) {
+      setQueryUnselected('');
+    }
   }
 
   return (
@@ -84,8 +147,16 @@ function RegistryPage() {
                 <Input
                   type='text'
                   id="search-input"
-                  onChange={(e) => setQueryUnselected(e.target.value)}>
+                  allowClear
+                  ref={inputRef}
+                  onChange={(e) => clearQueryIfClearPressed(e.target.value)}>
                   </Input>
+              </div>
+
+              <div className="main-page__left-actions-search-button">
+                <Button title='Поиск' onClick={() => setLeftInputValue()}>
+                  <SearchOutlined />
+                </Button>
               </div>
 
               <div className="main-page__left-actions-add">
@@ -104,7 +175,6 @@ function RegistryPage() {
                     loader={<div></div>}
                     scrollableTarget="scrollable-div"
                   >
-                      
                   <div className="table-container">
                     <table>
                       <thead>
@@ -112,11 +182,21 @@ function RegistryPage() {
                           <th>Is Selected?</th>
                           <th>
                             <span className='th-text'>Item ID</span>
-                            <Button>Sort</Button>
+                            <Button onClick={() => toggleSortLeft('id')}>
+                              { leftSortField === 'id'
+                                ? getLeftSortIcon()
+                                : <span>Sort</span>
+                              }
+                            </Button>
                           </th>
                           <th>
                             <span className='th-text'>Item Name</span>
-                            <Button>Sort</Button>
+                            <Button onClick={() => toggleSortLeft('name')}>
+                              { leftSortField === 'name'
+                                ? getLeftSortIcon()
+                                : <span>Sort</span>
+                              }
+                            </Button>
                           </th>
                         </tr>
                       </thead>

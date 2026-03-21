@@ -35,8 +35,17 @@ table tr:hover td {
   background-color: #fafafa;
 }
 
-table tr, table th {
+table tr {
   height: 40px;
+}
+
+table th, table td  {
+  font-size: 14px;
+}
+
+table th {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .th-text {
@@ -50,13 +59,20 @@ table tr, table th {
 }
 
 .main-page__left-actions-search {
-  width: calc(100% - 60px);
+  width: calc(100% - 60px - 60px);
   margin-right: 8px;
+}
+
+.main-page__left-actions-search-button {
+  width: 54px;
+  display: flex;
+  justify-content: flex-start;
+  border-right: 1px solid black;
 }
 
 
 .main-page__left-actions-add {
-  width: 54px + 6px;
+  width: 54px;
   display: flex;
   justify-content: flex-end;
 }
