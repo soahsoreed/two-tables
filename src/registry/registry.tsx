@@ -130,9 +130,21 @@ function RegistryPage() {
     setQueryUnselected(value);
   }
 
+  const setRightInputValue = () => {
+    const input = inputRef.current.input as HTMLInputElement;
+    const value = input.value;
+    setQuerySelected(value);
+  }
+
   const clearQueryIfClearPressed = (query: string) => {
     if (!query) {
       setQueryUnselected('');
+    }
+  }
+
+  const clearQueryIfRightClearPressed = (query: string) => {
+    if (!query) {
+      setQuerySelected('');
     }
   }
 
@@ -149,12 +161,15 @@ function RegistryPage() {
                   id="search-input"
                   allowClear
                   ref={inputRef}
+                  disabled={!unselectedItems?.length}
                   onChange={(e) => clearQueryIfClearPressed(e.target.value)}>
                   </Input>
               </div>
 
               <div className="main-page__left-actions-search-button">
-                <Button title='Поиск' onClick={() => setLeftInputValue()}>
+                <Button title='Поиск'
+                  disabled={!unselectedItems?.length}
+                  onClick={() => setLeftInputValue()}>
                   <SearchOutlined />
                 </Button>
               </div>
@@ -182,21 +197,21 @@ function RegistryPage() {
                           <th>Is Selected?</th>
                           <th>
                             <span className='th-text'>Item ID</span>
-                            <Button onClick={() => toggleSortLeft('id')}>
+                            {/* <Button onClick={() => toggleSortLeft('id')}>
                               { leftSortField === 'id'
                                 ? getLeftSortIcon()
                                 : <span>Sort</span>
                               }
-                            </Button>
+                            </Button> */}
                           </th>
                           <th>
                             <span className='th-text'>Item Name</span>
-                            <Button onClick={() => toggleSortLeft('name')}>
+                            {/* <Button onClick={() => toggleSortLeft('name')}>
                               { leftSortField === 'name'
                                 ? getLeftSortIcon()
                                 : <span>Sort</span>
                               }
-                            </Button>
+                            </Button> */}
                           </th>
                         </tr>
                       </thead>
@@ -230,7 +245,24 @@ function RegistryPage() {
 
           <div className="main-page__right">
             <div className="main-page__left-actions">
+              <div className="main-page__left-actions-search">
+                <Input
+                  type='text'
+                  id="search-input-right"
+                  allowClear
+                  disabled={!selectedItems.length}
+                  ref={inputRef}
+                  onChange={(e) => clearQueryIfRightClearPressed(e.target.value)}>
+                  </Input>
+              </div>
 
+              <div className="main-page__left-actions-search-button">
+                <Button title='Поиск'
+                  disabled={!selectedItems.length}
+                  onClick={() => setRightInputValue()}>
+                  <SearchOutlined />
+                </Button>
+              </div>
             </div>
 
             <div className="main-page__left-table table-container" id='scrollable-div-2'>
@@ -249,11 +281,11 @@ function RegistryPage() {
                           <th>Is Selected?</th>
                           <th>
                             <span className='th-text'>Item ID</span>
-                            <Button>Sort</Button>
+                            {/* <Button>Sort</Button> */}
                           </th>
                           <th>
                             <span className='th-text'>Item Name</span>
-                            <Button>Sort</Button>
+                            {/* <Button>Sort</Button> */}
                           </th>
                         </tr>
                       </thead>
