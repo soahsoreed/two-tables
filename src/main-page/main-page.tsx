@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import { items } from "./items.ts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import './style/registry.modules.css'
+import './main-page.modules.css'
 
 function RegistryPage() {
   const { notification } = App.useApp();
