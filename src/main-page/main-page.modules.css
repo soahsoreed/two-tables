@@ -52,18 +52,18 @@ table th {
   margin-right: 8px;
 }
 
-.main-page__left-actions {
+.main-page__actions {
   display: flex;
   padding: 8px;
   height: 50px;
 }
 
-.main-page__left-actions-search {
+.main-page__actions-search {
   width: calc(100% - 60px - 60px);
   margin-right: 8px;
 }
 
-.main-page__left-actions-search-button {
+.main-page__actions-search-button {
   width: 54px;
   display: flex;
   justify-content: flex-start;
@@ -71,7 +71,7 @@ table th {
 }
 
 
-.main-page__left-actions-add {
+.main-page__actions-add {
   width: 54px;
   display: flex;
   justify-content: flex-end;
@@ -79,7 +79,7 @@ table th {
 
 .main-page__left-table {
   overflow-y: auto;
-  height: calc(100% - 50px);
+  height: calc(100% - 100px);
 }
 
 .ant-app {
@@ -93,4 +93,40 @@ table th {
   top: 50; /* Stick to the top of its scrolling container */
   background-color: #f2f2f2; /* Optional: adds a background so content doesn't show through */
   z-index: 10; /* Optional: ensures the header is above other table content */
+}
+
+
+.item-row, .item-row__header {
+  width: 100%;
+  height: 50px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid silver;
+}
+
+.item-row {
+  background-color: white;
+}
+
+.item-row__header {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  height: 50px;
+}
+
+.item-row:hover {
+  background-color: #f2f2f2;
+}
+
+.item-row__id {
+  width: 30%;
+}
+
+.item-row__name {
+  width: 60%;
+}
+
+.item-row__selection {
+  width: 10%;
 }

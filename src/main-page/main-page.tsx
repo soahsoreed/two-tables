@@ -5,11 +5,9 @@ import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import './main-page.modules.css'
 import { baseUrl } from "../baseUrl.ts";
+import { ReactSortable } from "react-sortablejs";
 
 function RegistryPage() {
-  // const { notification } = App.useApp();
-  // const navigate = useNavigate();
-
   const [_items, setItems] = useState([]);
   const [paginationData, setPaginationData] = useState({ page: 1, total: 0, limit: 20 });
   const [query, setQuery] = useState('');
@@ -90,36 +88,42 @@ function RegistryPage() {
   return (
       <div className="main-page__container">
 
-        <div className="main-page__left-actions">
-              <div className="main-page__left-actions-search">
-                <Input
-                  type='text'
-                  id="search-input"
-                  allowClear
-                  ref={inputRef}
-                  disabled={!unselectedItems?.length}
-                  onChange={(e) => clearQueryIfClearPressed(e.target.value)}>
-                  </Input>
-              </div>
+        <div className="main-page__actions">
+          <div className="main-page__actions-search">
+            <Input
+              type='text'
+              id="search-input"
+              allowClear
+              ref={inputRef}
+              disabled={!unselectedItems?.length}
+              onChange={(e) => clearQueryIfClearPressed(e.target.value)}>
+              </Input>
+          </div>
 
-              <div className="main-page__left-actions-search-button">
-                <Button title='Поиск'
-                  disabled={!unselectedItems?.length}
-                  onClick={() => setInputValue()}>
-                  <SearchOutlined />
-                </Button>
-              </div>
+          <div className="main-page__actions-search-button">
+            <Button title='Поиск'
+              disabled={!unselectedItems?.length}
+              onClick={() => setInputValue()}>
+              <SearchOutlined />
+            </Button>
+          </div>
 
-              <div className="main-page__left-actions-add">
-                <Button title='Добавить запись'>
-                  <PlusOutlined />
-                </Button>
-              </div>
-              
+          <div className="main-page__actions-add">
+            <Button title='Добавить запись'>
+              <PlusOutlined />
+            </Button>
+          </div>
         </div>
 
         <div className="main-page__flex-container">
+
           <div className="main-page__left">
+            <div className='item-row__header'>
+              <div className='item-row__id'>Id</div>
+              <div className='item-row__name'>Name</div>
+              <div className='item-row__selection'>is selected?</div>
+            </div>
+
             <div className="main-page__left-table table-container" id='scrollable-div'>
               <InfiniteScroll
                     dataLength={_items?.length}
@@ -129,7 +133,22 @@ function RegistryPage() {
                     scrollableTarget="scrollable-div"
                   >
                   <div className="table-container">
-                    <table>
+                     {/* <ReactSortable list={unselectedItems} setList={setUnselectedItems}> */}
+                        {unselectedItems.map((item) => (
+                          <div className='item-row' key={item.id}>
+                            <div className='item-row__id'>{item.id}</div>
+                            <div className='item-row__name'>{item.name}</div>
+                            <div className='item-row__selection'>
+                              { <Checkbox 
+                                  checked={item.isSelected}
+                                  onChange={ () => toggleSelection(item) }>
+                                </Checkbox> 
+                              } 
+                            </div>
+                          </div>
+                        ))}
+                      {/* </ReactSortable> */}
+                    {/* <table>
                       <thead>
                         <tr>
                           <th>Is Selected?</th>
@@ -148,11 +167,7 @@ function RegistryPage() {
                               return (
                                 <tr key={index}>
                                   <td>
-                                    { <Checkbox 
-                                        checked={item.isSelected}
-                                        onChange={ () => toggleSelection(item) }>
-                                      </Checkbox> 
-                                    } 
+                                   
                                   </td>
                                   <td> { item.id } </td>
                                   <td> { item.name } </td>
@@ -160,7 +175,7 @@ function RegistryPage() {
                               )
                             }) }
                       </tbody>
-                    </table>
+                    </table> */}
                   </div>
               </InfiniteScroll>
 
@@ -168,6 +183,12 @@ function RegistryPage() {
           </div>
 
           <div className="main-page__right">
+            <div className='item-row__header'>
+            <div className='item-row__id'>Id</div>
+            <div className='item-row__name'>Name</div>
+            <div className='item-row__selection'>is selected?</div>
+            </div>
+
             <div className="main-page__left-table table-container" id='scrollable-div-2'>
                <InfiniteScroll
                     dataLength={selectedItems?.length}
@@ -178,17 +199,30 @@ function RegistryPage() {
                   >
                       
                   <div className="table-container">
-                    <table>
+                    <ReactSortable list={selectedItems} setList={setSelectedItems}>
+                        {selectedItems.map((item) => (
+                          <div className='item-row' key={item.id}>
+                            <div className='item-row__id'>{item.id}</div>
+                            <div className='item-row__name'>{item.name}</div>
+                            <div className='item-row__selection'>
+                              { <Checkbox 
+                                  checked={item.isSelected}
+                                  onChange={ () => toggleSelection(item) }>
+                                </Checkbox> 
+                              } 
+                            </div>
+                          </div>
+                        ))}
+                      </ReactSortable>
+                    {/* <table>
                       <thead>
                         <tr>
                           <th>Is Selected?</th>
                           <th>
                             <span className='th-text'>Item ID</span>
-                            {/* <Button>Sort</Button> */}
                           </th>
                           <th>
                             <span className='th-text'>Item Name</span>
-                            {/* <Button>Sort</Button> */}
                           </th>
                         </tr>
                       </thead>
@@ -211,7 +245,7 @@ function RegistryPage() {
                               )
                             }) }
                       </tbody>
-                    </table>
+                    </table> */}
                   </div>
               </InfiniteScroll>
             </div>
