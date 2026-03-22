@@ -1,10 +1,10 @@
-import './index.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import { appRoutes } from './app-routes';
+import './index.css'
 
 const App = () => {
   const router = createBrowserRouter(appRoutes);

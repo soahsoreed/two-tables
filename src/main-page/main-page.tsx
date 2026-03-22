@@ -1,160 +1,96 @@
-import {App, Button, Checkbox, Flex, Input } from "antd";
-import {PlusOutlined, SearchOutlined, ArrowUpOutlined, ArrowDownOutlined} from "@ant-design/icons";
+import {App, Button, Checkbox, Input } from "antd";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import { items } from "./items.ts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import './main-page.modules.css'
+import { baseUrl } from "../baseUrl.ts";
 
 function RegistryPage() {
-  const { notification } = App.useApp();
-  const navigate = useNavigate();
+  // const { notification } = App.useApp();
+  // const navigate = useNavigate();
 
   const [_items, setItems] = useState([]);
+  const [paginationData, setPaginationData] = useState({ page: 1, total: 0, limit: 20 });
+  const [query, setQuery] = useState('');
 
   const [unselectedItems, setUnselectedItems] = useState([]);
-  const [itemsByQueryUnselected, setItemsByQueryUnselected] = useState([]);
-  const [queryUnselected, setQueryUnselected] = useState('');
-
   const [selectedItems, setSelectedItems] = useState([]);
-  const [itemsByQuerySelected, setItemsByQuerySelected] = useState([]);
-  const [querySelected, setQuerySelected] = useState('');
 
-  const [leftSortDirection, setLeftSortDirection] = useState(null);
-  const [leftSortField, setLeftSortField] = useState(null);
-
-  const [rightSortDirection, setRightSortDirection] = useState(null);
-  const [rightSortField, setRightSortField] = useState(null);
-
-   const inputRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
-    fetchItems();
+    fetchItems(paginationData.page, paginationData.limit, query);
   }, []);
 
   useEffect(() => {
     const selected = _items.filter(item => item.isSelected);
     const unselected = _items.filter(item => !item.isSelected);
+    debugger
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
 
   useEffect(() => {
-    const sorted = sortBy(leftSortDirection, leftSortField, itemsByQueryUnselected);
-    setUnselectedItems(sorted);
-  }, [leftSortDirection, leftSortField]);
+    fetchItems(1, paginationData.limit, query);
+  }, [query]);
 
-  useEffect(() => {
-    const itemsByQuery = searchByQuery(queryUnselected, unselectedItems);
-    setItemsByQueryUnselected(itemsByQuery);
-  }, [queryUnselected, unselectedItems]);
+  const fetchItems = async (page, limit, query = '') => {
 
-  useEffect(() => {
-    const itemsByQuery = searchByQuery(querySelected, selectedItems);
-    setItemsByQuerySelected(itemsByQuery);
-  }, [querySelected, selectedItems]);
+    try {
 
-  const fetchItems = (startIndex = 0, lastIndex = 20) => {
-    const newElements = items.slice(startIndex, lastIndex);
-    const newItems = [..._items, ...newElements];
-    setItems(newItems);
-    return newItems;
-  }
+      const data = await fetch(`${baseUrl}/records?` + 
+          `page=${page}&` + 
+          `limit=${limit}&` + 
+          `search=${query}`
+        )
+        .then(res => res.json());
+      
+      const newItems = data.pagination.page === 1
+        ? data.items
+        : _items.concat(data.items);
 
-  const searchByQuery = (query: string, items: any[]) => {
-    const normalizeText = (text: string) => (text ?? '').trim().toLowerCase();
-    const queryNormalized = normalizeText(query);
+      setItems(newItems);
+      setPaginationData(data.pagination);
+      // debugger
+      return newItems;
+      
+    } catch (error) {
+      
+      console.log('Error while fetch items')
 
-    const result = items.filter(item => {
-      const nameNormalized = normalizeText(item.name);
-      return nameNormalized.includes(queryNormalized);
-    });
-
-    return result;
-  }
-
- const sortBy = (direction = 'dec', fieldName, items) => {
-    const sorted = items.toSorted((a, b) => {
-      const nameA = String(a[fieldName]).trim().toUpperCase();
-      const nameB = String(b[fieldName]).trim().toUpperCase();
-
-      const sortDec = () => nameA > nameB ? -1 : 1;
-      const sortAcs = () => nameA > nameB ? 1 : -1;
-      return direction === 'dec' ? sortDec() : sortAcs();
-    });
-
-    return sorted;
+    };
   }
 
   const toggleSelection = (item) => {
     const newValue = !item.isSelected;
 
-    const newItems = _items.map(e =>
-      e.id === item.id ? { ...e, isSelected: newValue } : e
-    );
-
-    setItems(newItems);
+    fetch(`${baseUrl}/records/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ isSelected: newValue })
+    })
+      .then(_ => fetchItems(1, paginationData.limit * (paginationData.page - 1), query));
   }
 
-  const toggleSortLeft = (fieldName: string) => {
-    setLeftSortField(fieldName);
-
-    const newSortDirection = leftSortDirection === 'dec' ? 'acc' : 'dec';
-
-    if (newSortDirection !== leftSortDirection) {
-      setLeftSortDirection(newSortDirection);
-    }
-  }
-
-  const toggleSortRight = (fieldName: string) => {
-    setRightSortField(fieldName);
-
-    const newSortDirection = leftSortDirection === 'dec' ? 'acc' : 'dec';
-
-    if (newSortDirection !== leftSortDirection) {
-      setRightSortDirection(newSortDirection);
-    }
-  }
-
-  const getLeftSortIcon = () => {
-    if (leftSortDirection === 'dec') {
-      return <ArrowDownOutlined />
-    } else {
-      return <ArrowUpOutlined />
-    }
-  }
-
-  const setLeftInputValue = () => {
+  const setInputValue = () => {
     const input = inputRef.current.input as HTMLInputElement;
     const value = input.value;
-    setQueryUnselected(value);
-  }
-
-  const setRightInputValue = () => {
-    const input = inputRef.current.input as HTMLInputElement;
-    const value = input.value;
-    setQuerySelected(value);
+    setQuery(value);
   }
 
   const clearQueryIfClearPressed = (query: string) => {
     if (!query) {
-      setQueryUnselected('');
-    }
-  }
-
-  const clearQueryIfRightClearPressed = (query: string) => {
-    if (!query) {
-      setQuerySelected('');
+      setQuery('');
     }
   }
 
   return (
       <div className="main-page__container">
 
-        <div className="main-page__flex-container">
-          <div className="main-page__left">
-
-            <div className="main-page__left-actions">
+        <div className="main-page__left-actions">
               <div className="main-page__left-actions-search">
                 <Input
                   type='text'
@@ -169,7 +105,7 @@ function RegistryPage() {
               <div className="main-page__left-actions-search-button">
                 <Button title='Поиск'
                   disabled={!unselectedItems?.length}
-                  onClick={() => setLeftInputValue()}>
+                  onClick={() => setInputValue()}>
                   <SearchOutlined />
                 </Button>
               </div>
@@ -180,12 +116,14 @@ function RegistryPage() {
                 </Button>
               </div>
               
-            </div>
+        </div>
 
+        <div className="main-page__flex-container">
+          <div className="main-page__left">
             <div className="main-page__left-table table-container" id='scrollable-div'>
               <InfiniteScroll
                     dataLength={_items?.length}
-                    next={() => fetchItems(_items?.length || 0, (_items?.length + 20))}
+                    next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
                     hasMore={true}
                     loader={<div></div>}
                     scrollableTarget="scrollable-div"
@@ -197,30 +135,18 @@ function RegistryPage() {
                           <th>Is Selected?</th>
                           <th>
                             <span className='th-text'>Item ID</span>
-                            {/* <Button onClick={() => toggleSortLeft('id')}>
-                              { leftSortField === 'id'
-                                ? getLeftSortIcon()
-                                : <span>Sort</span>
-                              }
-                            </Button> */}
                           </th>
                           <th>
                             <span className='th-text'>Item Name</span>
-                            {/* <Button onClick={() => toggleSortLeft('name')}>
-                              { leftSortField === 'name'
-                                ? getLeftSortIcon()
-                                : <span>Sort</span>
-                              }
-                            </Button> */}
                           </th>
                         </tr>
                       </thead>
 
                       <tbody>
                         
-                            { itemsByQueryUnselected.map(item => {
+                            { unselectedItems.map((item, index) => {
                               return (
-                                <tr key={item.id}>
+                                <tr key={index}>
                                   <td>
                                     { <Checkbox 
                                         checked={item.isSelected}
@@ -239,36 +165,13 @@ function RegistryPage() {
               </InfiniteScroll>
 
             </div>
-
-           
           </div>
 
           <div className="main-page__right">
-            <div className="main-page__left-actions">
-              <div className="main-page__left-actions-search">
-                <Input
-                  type='text'
-                  id="search-input-right"
-                  allowClear
-                  disabled={!selectedItems.length}
-                  ref={inputRef}
-                  onChange={(e) => clearQueryIfRightClearPressed(e.target.value)}>
-                  </Input>
-              </div>
-
-              <div className="main-page__left-actions-search-button">
-                <Button title='Поиск'
-                  disabled={!selectedItems.length}
-                  onClick={() => setRightInputValue()}>
-                  <SearchOutlined />
-                </Button>
-              </div>
-            </div>
-
             <div className="main-page__left-table table-container" id='scrollable-div-2'>
                <InfiniteScroll
                     dataLength={selectedItems?.length}
-                    next={() => fetchItems(_items?.length || 0, (_items?.length + 20))}
+                    next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
                     hasMore={true}
                     loader={<div></div>}
                     scrollableTarget="scrollable-div-2"
@@ -292,9 +195,9 @@ function RegistryPage() {
 
                       <tbody>
                         
-                            { itemsByQuerySelected.map(item => {
+                            { selectedItems.map((item, index2) => {
                               return (
-                                <tr key={item.id}>
+                                <tr key={index2}>
                                   <td>
                                     { <Checkbox 
                                         checked={item.isSelected}
