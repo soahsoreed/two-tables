@@ -1,8 +1,7 @@
-import {App, Button, Checkbox, Input } from "antd";
+import {App, Button, Input } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import './main-page.modules.css';
 import { baseUrl } from "../baseUrl.ts";
 import { ReactSortable } from "react-sortablejs";
 import { IRecord } from "./IRecord.ts";
@@ -10,6 +9,7 @@ import { sortBySortIndex } from "./sortBySortIndex.ts";
 import NewItemModal from "./components/AddItemModal/NewItemModal.tsx";
 import ItemHeader from "./components/ItemHeader/ItemHeader.tsx";
 import Item from "./components/Item/Item.tsx";
+import './main-page.modules.css';
 
 function RegistryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
