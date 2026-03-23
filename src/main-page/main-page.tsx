@@ -126,14 +126,12 @@ function RegistryPage() {
             <Input
               type='text'
               id="search-input"
-              allowClear
               onChange={(e) => setQuery(e.target.value)}>
             </Input>
           </div>
 
           <div className="main-page__actions-search-button">
             <Button title='Поиск'
-              disabled={query?.length === 0}
               onClick={() => fetchItems(1, paginationData.limit, query)}>
               <SearchOutlined />
             </Button>
@@ -152,7 +150,7 @@ function RegistryPage() {
             <div className='item-row__header'>
               <div className='item-row__id'>Id</div>
               <div className='item-row__name'>Name</div>
-              <div className='item-row__selection'>is selected?</div>
+              <div className='item-row__selection'>Выбор</div>
             </div>
 
             <div className="main-page__left-table table-container" id='scrollable-div'>
@@ -184,9 +182,9 @@ function RegistryPage() {
 
           <div className="main-page__right">
             <div className='item-row__header'>
-            <div className='item-row__id'>Id</div>
-            <div className='item-row__name'>Name</div>
-            <div className='item-row__selection'>is selected?</div>
+              <div className='item-row__id'>Id</div>
+              <div className='item-row__name'>Name</div>
+              <div className='item-row__selection'>Выбор</div>
             </div>
 
             <div className="main-page__left-table table-container" id='scrollable-div-2'>
