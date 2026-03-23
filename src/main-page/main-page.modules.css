@@ -18,40 +18,6 @@
   overflow-y: auto;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse; /* Collapses double borders into a single border */
-  table-layout: fixed;
-  overflow-wrap: break-word;
-}
-
-table th, table td {
-  border: 1px solid silver;
-  padding: 16px;
-  background-color: white;
-}
-
-table tr:hover td {
-  background-color: #fafafa;
-}
-
-table tr {
-  height: 40px;
-}
-
-table th, table td  {
-  font-size: 14px;
-}
-
-table th {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.th-text {
-  margin-right: 8px;
-}
-
 .main-page__actions {
   display: flex;
   padding: 8px;
@@ -70,7 +36,6 @@ table th {
   border-right: 1px solid black;
 }
 
-
 .main-page__actions-add {
   width: 54px;
   display: flex;
@@ -85,16 +50,6 @@ table th {
 .ant-app {
   height: 100% !important;
 }
-
-.table-container table th {
-  /* Make the header sticky */
-  /* position: sticky; */
-  position: sticky;
-  top: 50; /* Stick to the top of its scrolling container */
-  background-color: #f2f2f2; /* Optional: adds a background so content doesn't show through */
-  z-index: 10; /* Optional: ensures the header is above other table content */
-}
-
 
 .item-row, .item-row__header {
   width: 100%;

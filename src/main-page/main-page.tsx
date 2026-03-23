@@ -2,13 +2,16 @@ import {App, Button, Checkbox, Input } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import './main-page.modules.css'
+import './main-page.modules.css';
 import { baseUrl } from "../baseUrl.ts";
 import { ReactSortable } from "react-sortablejs";
 import { IRecord } from "./IRecord.ts";
 import { sortBySortIndex } from "./sortBySortIndex.ts";
+import NewItemModal from "./components/AddItemModal/NewItemModal.tsx";
 
 function RegistryPage() {
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
   const [_items, setItems] = useState([]);
   const [paginationData, setPaginationData] = useState({ page: 1, total: 0, limit: 20 });
   const [query, setQuery] = useState('');
@@ -62,7 +65,7 @@ function RegistryPage() {
   const toggleSelection = (item) => {
     const selectedNewValue = !item.isSelected;
 
-    fetch(`${baseUrl}/records/${item.id}`, {
+    return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -112,8 +115,27 @@ function RegistryPage() {
       .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
   }
 
+  const openNewItemModal = () => {
+    setIsModalOpen(true);
+  }
+
+  const addNewItem = (item: IRecord) => {
+    return fetch(`${baseUrl}/records`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: item.name,
+        isSelected: item.isSelected,
+      })
+    })
+      .then(_ => fetchItems(paginationData.page, paginationData.limit, query));
+  }
+
   return (
       <div className="main-page__container">
+        <NewItemModal isOpen={isModalOpen} handleOk={(item) => addNewItem(item)}></NewItemModal>
 
         <div className="main-page__actions">
           <div className="main-page__actions-search">
@@ -136,7 +158,7 @@ function RegistryPage() {
           </div>
 
           <div className="main-page__actions-add">
-            <Button title='Добавить запись'>
+            <Button title='Добавить запись' onClick={() => openNewItemModal()}>
               <PlusOutlined />
             </Button>
           </div>
