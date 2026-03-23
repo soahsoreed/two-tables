@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Checkbox, Input } from 'antd';
+import { Modal, Checkbox, Input } from 'antd';
 import './NewItemModal.modules.css';
 
 const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
@@ -49,7 +49,7 @@ const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
           <div className="add-item-modal__is-selected">
             <div className="add-item-modal__label">Выбран?</div>
             <div className="add-item-modal__checkbox">
-              <Checkbox></Checkbox>
+              <Checkbox onChange={() => setIsSelected(!isSelected)}></Checkbox>
             </div>
           </div>
 
@@ -60,4 +60,3 @@ const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
 };
 
 export default NewItemModal;
-// onChange={(e) => clearQueryIfClearPressed(e.target.value)}>

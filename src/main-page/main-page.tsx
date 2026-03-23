@@ -10,7 +10,7 @@ import { sortBySortIndex } from "./sortBySortIndex.ts";
 import NewItemModal from "./components/AddItemModal/NewItemModal.tsx";
 
 function RegistryPage() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [_items, setItems] = useState([]);
   const [paginationData, setPaginationData] = useState({ page: 1, total: 0, limit: 20 });
@@ -31,10 +31,6 @@ function RegistryPage() {
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
-
-  useEffect(() => {
-    fetchItems(1, paginationData.limit, query);
-  }, [query]);
 
   const fetchItems = async (page, limit, query = '') => {
 
@@ -91,18 +87,6 @@ function RegistryPage() {
     });
   }
 
-  const setInputValue = () => {
-    const input = inputRef.current.input as HTMLInputElement;
-    const value = input.value;
-    setQuery(value);
-  }
-
-  const clearQueryIfClearPressed = (query: string) => {
-    if (!query) {
-      setQuery('');
-    }
-  }
-
   const updateSortOrder = () => {
     const sorted = selectedItems.map((it, index) => {
       return {
@@ -143,16 +127,14 @@ function RegistryPage() {
               type='text'
               id="search-input"
               allowClear
-              ref={inputRef}
-              disabled={!unselectedItems?.length}
-              onChange={(e) => clearQueryIfClearPressed(e.target.value)}>
-              </Input>
+              onChange={(e) => setQuery(e.target.value)}>
+            </Input>
           </div>
 
           <div className="main-page__actions-search-button">
             <Button title='Поиск'
-              disabled={!unselectedItems?.length}
-              onClick={() => setInputValue()}>
+              disabled={query?.length === 0}
+              onClick={() => fetchItems(1, paginationData.limit, query)}>
               <SearchOutlined />
             </Button>
           </div>
