@@ -6,7 +6,7 @@ import './main-page.modules.css'
 import { baseUrl } from "../baseUrl.ts";
 import { ReactSortable } from "react-sortablejs";
 import { IRecord } from "./IRecord.ts";
-import { sortByTopId } from "./sortByTopId.ts";
+import { sortBySortIndex } from "./sortBySortIndex.ts";
 
 function RegistryPage() {
   const [_items, setItems] = useState([]);
@@ -24,7 +24,7 @@ function RegistryPage() {
 
   useEffect(() => {
     const unselected = _items.filter(item => !item.isSelected);
-    const selected = sortByTopId(_items.filter(item => item.isSelected));
+    const selected = sortBySortIndex(_items.filter(item => item.isSelected));
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
@@ -75,7 +75,7 @@ function RegistryPage() {
   }
 
   const updateTopItemId = (item) => {
-    const topIdNewValue = item.topId;
+    const sortIndexNewValue = item.sortIndex;
 
     return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
@@ -83,7 +83,7 @@ function RegistryPage() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        topId: topIdNewValue
+        sortIndex: sortIndexNewValue
       })
     });
   }
@@ -104,7 +104,7 @@ function RegistryPage() {
     const sorted = selectedItems.map((it, index) => {
       return {
         ...it,
-        topId: index
+        sortIndex: index
       }
     });
 
