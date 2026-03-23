@@ -1,11 +1,12 @@
 import {App, Button, Checkbox, Input } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import './main-page.modules.css'
 import { baseUrl } from "../baseUrl.ts";
 import { ReactSortable } from "react-sortablejs";
+import { IRecord } from "./IRecord.ts";
+import { sortByTopId } from "./sortByTopId.ts";
 
 function RegistryPage() {
   const [_items, setItems] = useState([]);
@@ -22,9 +23,8 @@ function RegistryPage() {
   }, []);
 
   useEffect(() => {
-    const selected = _items.filter(item => item.isSelected);
     const unselected = _items.filter(item => !item.isSelected);
-    debugger
+    const selected = sortByTopId(_items.filter(item => item.isSelected));
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
@@ -50,7 +50,6 @@ function RegistryPage() {
 
       setItems(newItems);
       setPaginationData(data.pagination);
-      // debugger
       return newItems;
       
     } catch (error) {
@@ -61,16 +60,32 @@ function RegistryPage() {
   }
 
   const toggleSelection = (item) => {
-    const newValue = !item.isSelected;
+    const selectedNewValue = !item.isSelected;
 
     fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ isSelected: newValue })
+      body: JSON.stringify({ 
+        isSelected: selectedNewValue
+      })
     })
-      .then(_ => fetchItems(1, paginationData.limit * (paginationData.page - 1), query));
+      .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
+  }
+
+  const updateTopItemId = (item) => {
+    const topIdNewValue = item.topId;
+
+    return fetch(`${baseUrl}/records/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        topId: topIdNewValue
+      })
+    });
   }
 
   const setInputValue = () => {
@@ -83,6 +98,18 @@ function RegistryPage() {
     if (!query) {
       setQuery('');
     }
+  }
+
+  const updateSortOrder = () => {
+    const sorted = selectedItems.map((it, index) => {
+      return {
+        ...it,
+        topId: index
+      }
+    });
+
+    Promise.all(sorted.map(it => updateTopItemId(it)))
+      .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
   }
 
   return (
@@ -126,56 +153,25 @@ function RegistryPage() {
 
             <div className="main-page__left-table table-container" id='scrollable-div'>
               <InfiniteScroll
-                    dataLength={_items?.length}
-                    next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
-                    hasMore={true}
-                    loader={<div></div>}
-                    scrollableTarget="scrollable-div"
-                  >
-                  <div className="table-container">
-                     {/* <ReactSortable list={unselectedItems} setList={setUnselectedItems}> */}
-                        {unselectedItems.map((item) => (
-                          <div className='item-row' key={item.id}>
-                            <div className='item-row__id'>{item.id}</div>
-                            <div className='item-row__name'>{item.name}</div>
-                            <div className='item-row__selection'>
-                              { <Checkbox 
-                                  checked={item.isSelected}
-                                  onChange={ () => toggleSelection(item) }>
-                                </Checkbox> 
-                              } 
-                            </div>
-                          </div>
-                        ))}
-                      {/* </ReactSortable> */}
-                    {/* <table>
-                      <thead>
-                        <tr>
-                          <th>Is Selected?</th>
-                          <th>
-                            <span className='th-text'>Item ID</span>
-                          </th>
-                          <th>
-                            <span className='th-text'>Item Name</span>
-                          </th>
-                        </tr>
-                      </thead>
+                dataLength={_items?.length}
+                next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
+                hasMore={true}
+                loader={<div></div>}
+                scrollableTarget="scrollable-div">
 
-                      <tbody>
-                        
-                            { unselectedItems.map((item, index) => {
-                              return (
-                                <tr key={index}>
-                                  <td>
-                                   
-                                  </td>
-                                  <td> { item.id } </td>
-                                  <td> { item.name } </td>
-                                </tr>
-                              )
-                            }) }
-                      </tbody>
-                    </table> */}
+                  <div className="table-container">
+                      {unselectedItems.map((item) => (
+                        <div className='item-row' key={item.id}>
+                          <div className='item-row__id'>{item.id}</div>
+                          <div className='item-row__name'>{item.name}</div>
+                          <div className='item-row__selection'>
+                            { <Checkbox 
+                                checked={item.isSelected}
+                                onChange={ () => toggleSelection(item) }>
+                              </Checkbox> } 
+                          </div>
+                        </div>
+                      ))}
                   </div>
               </InfiniteScroll>
 
@@ -197,11 +193,13 @@ function RegistryPage() {
                     loader={<div></div>}
                     scrollableTarget="scrollable-div-2"
                   >
-                      
                   <div className="table-container">
-                    <ReactSortable list={selectedItems} setList={setSelectedItems}>
+                    <ReactSortable 
+                      list={selectedItems} 
+                      setList={setSelectedItems} >
+
                         {selectedItems.map((item) => (
-                          <div className='item-row' key={item.id}>
+                          <div className='item-row' key={item.id} onDragEnd={() => updateSortOrder()}>
                             <div className='item-row__id'>{item.id}</div>
                             <div className='item-row__name'>{item.name}</div>
                             <div className='item-row__selection'>
@@ -214,38 +212,6 @@ function RegistryPage() {
                           </div>
                         ))}
                       </ReactSortable>
-                    {/* <table>
-                      <thead>
-                        <tr>
-                          <th>Is Selected?</th>
-                          <th>
-                            <span className='th-text'>Item ID</span>
-                          </th>
-                          <th>
-                            <span className='th-text'>Item Name</span>
-                          </th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        
-                            { selectedItems.map((item, index2) => {
-                              return (
-                                <tr key={index2}>
-                                  <td>
-                                    { <Checkbox 
-                                        checked={item.isSelected}
-                                        onChange={ () => toggleSelection(item) }>
-                                      </Checkbox> 
-                                    } 
-                                  </td>
-                                  <td> { item.id } </td>
-                                  <td> { item.name } </td>
-                                </tr>
-                              )
-                            }) }
-                      </tbody>
-                    </table> */}
                   </div>
               </InfiniteScroll>
             </div>
