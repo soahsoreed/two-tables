@@ -28,7 +28,6 @@ function RegistryPage() {
   useEffect(() => {
     const unselected = _items.filter(item => !item.isSelected);
     const selected = sortBySortIndex(_items.filter(item => item.isSelected));
-    // debugger
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
@@ -76,7 +75,6 @@ function RegistryPage() {
 
   const updateTopItemId = (item) => {
     const sortIndexNewValue = item.sortIndex;
-    // debugger
 
     return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
@@ -96,8 +94,6 @@ function RegistryPage() {
         sortIndex: index
       }
     });
-
-    debugger
 
     Promise.all(sorted.map(it => updateTopItemId(it)))
       .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
