@@ -1,0 +1,8 @@
+.no-items {
+  width: 100%;
+  height: calc(100vh - 110px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}

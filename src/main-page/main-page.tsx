@@ -1,4 +1,4 @@
-import {App, Button, Input } from "antd";
+import { App, Button, Input } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -10,6 +10,7 @@ import NewItemModal from "./components/AddItemModal/NewItemModal.tsx";
 import ItemHeader from "./components/ItemHeader/ItemHeader.tsx";
 import Item from "./components/Item/Item.tsx";
 import './main-page.modules.css';
+import NoItems from "./components/NoItems/NoItems.tsx";
 
 function RegistryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,6 +61,7 @@ function RegistryPage() {
 
   const toggleSelection = (item) => {
     const selectedNewValue = !item.isSelected;
+    debugger
 
     return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
@@ -73,7 +75,7 @@ function RegistryPage() {
       .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
   }
 
-  const updateTopItemId = (item) => {
+  const saveItemSortOrder = (item) => {
     const sortIndexNewValue = item.sortIndex;
 
     return fetch(`${baseUrl}/records/${item.id}`, {
@@ -95,7 +97,7 @@ function RegistryPage() {
       }
     });
 
-    Promise.all(sorted.map(it => updateTopItemId(it)))
+    Promise.all(sorted.map(it => saveItemSortOrder(it)))
       .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
   }
 
@@ -154,12 +156,12 @@ function RegistryPage() {
                 dataLength={_items?.length}
                 next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
                 hasMore={true}
-                loader={<div></div>}
+                loader={<NoItems></NoItems>}
                 scrollableTarget="scrollable-div">
 
                   <div className="table-container">
                       {unselectedItems.map((item) => (
-                        <Item key={item.id} item={item} onCheckboxChange={toggleSelection}></Item>
+                        <Item key={item.id} item={item} onIsSelectedChange={toggleSelection}></Item>
                       ))}
                   </div>
               </InfiniteScroll>
@@ -175,7 +177,7 @@ function RegistryPage() {
                     dataLength={selectedItems?.length}
                     next={() => fetchItems(paginationData.page + 1, paginationData.limit, query)}
                     hasMore={true}
-                    loader={<div></div>}
+                    loader={<NoItems></NoItems>}
                     scrollableTarget="scrollable-div-2"
                   >
                   <div className="table-container">
@@ -187,8 +189,8 @@ function RegistryPage() {
                           <Item 
                             key={item.id} 
                             item={item} 
-                            onCheckboxChange={toggleSelection}
-                            onDragEnd={() => updateSortOrder()}>
+                            onIsSelectedChange={toggleSelection}
+                            onDragEnd={updateSortOrder}>
                           </Item>
                         ))}
                       </ReactSortable>

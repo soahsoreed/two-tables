@@ -1,10 +1,10 @@
 
 import { IRecord } from '../../IRecord';
-import { Checkbox } from "antd";
+import { Button } from "antd";
 import './Item.modules.css';
 
-const Item = ({ item, onCheckboxChange, onDragEnd = () => {} }
-    : { item: IRecord, onCheckboxChange: (it: IRecord) => void, onDragEnd?: () => void }) => {
+const Item = ({ item, onIsSelectedChange, onDragEnd = () => {} }
+    : { item: IRecord, onIsSelectedChange: (it: IRecord) => void, onDragEnd?: () => void }) => {
 
   return (
     <>
@@ -12,7 +12,7 @@ const Item = ({ item, onCheckboxChange, onDragEnd = () => {} }
         <div className='item-row__id'>{item.id}</div>
         <div className='item-row__name'>{item.name}</div>
         <div className='item-row__selection'>
-          { <Checkbox  checked={item.isSelected} onChange={ () => onCheckboxChange(item) }></Checkbox> } 
+          <Button onClick={ () => onIsSelectedChange(item)}>Выбрать</Button>
         </div>
       </div>
     </>
