@@ -8,6 +8,8 @@ import { ReactSortable } from "react-sortablejs";
 import { IRecord } from "./IRecord.ts";
 import { sortBySortIndex } from "./sortBySortIndex.ts";
 import NewItemModal from "./components/AddItemModal/NewItemModal.tsx";
+import ItemHeader from "./components/ItemHeader/ItemHeader.tsx";
+import Item from "./components/Item/Item.tsx";
 
 function RegistryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,8 +21,6 @@ function RegistryPage() {
   const [unselectedItems, setUnselectedItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const inputRef = useRef(null);
-
   useEffect(() => {
     fetchItems(paginationData.page, paginationData.limit, query);
   }, []);
@@ -28,6 +28,7 @@ function RegistryPage() {
   useEffect(() => {
     const unselected = _items.filter(item => !item.isSelected);
     const selected = sortBySortIndex(_items.filter(item => item.isSelected));
+    // debugger
     setSelectedItems(selected);
     setUnselectedItems(unselected);
   }, [_items]);
@@ -75,6 +76,7 @@ function RegistryPage() {
 
   const updateTopItemId = (item) => {
     const sortIndexNewValue = item.sortIndex;
+    // debugger
 
     return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
@@ -94,6 +96,8 @@ function RegistryPage() {
         sortIndex: index
       }
     });
+
+    debugger
 
     Promise.all(sorted.map(it => updateTopItemId(it)))
       .then(_ => fetchItems(1, paginationData.limit * paginationData.page, query));
@@ -147,11 +151,7 @@ function RegistryPage() {
         <div className="main-page__flex-container">
 
           <div className="main-page__left">
-            <div className='item-row__header'>
-              <div className='item-row__id'>Id</div>
-              <div className='item-row__name'>Name</div>
-              <div className='item-row__selection'>Выбор</div>
-            </div>
+            <ItemHeader></ItemHeader>
 
             <div className="main-page__left-table table-container" id='scrollable-div'>
               <InfiniteScroll
@@ -163,16 +163,7 @@ function RegistryPage() {
 
                   <div className="table-container">
                       {unselectedItems.map((item) => (
-                        <div className='item-row' key={item.id}>
-                          <div className='item-row__id'>{item.id}</div>
-                          <div className='item-row__name'>{item.name}</div>
-                          <div className='item-row__selection'>
-                            { <Checkbox 
-                                checked={item.isSelected}
-                                onChange={ () => toggleSelection(item) }>
-                              </Checkbox> } 
-                          </div>
-                        </div>
+                        <Item key={item.id} item={item} onCheckboxChange={toggleSelection}></Item>
                       ))}
                   </div>
               </InfiniteScroll>
@@ -181,11 +172,7 @@ function RegistryPage() {
           </div>
 
           <div className="main-page__right">
-            <div className='item-row__header'>
-              <div className='item-row__id'>Id</div>
-              <div className='item-row__name'>Name</div>
-              <div className='item-row__selection'>Выбор</div>
-            </div>
+            <ItemHeader></ItemHeader>
 
             <div className="main-page__left-table table-container" id='scrollable-div-2'>
                <InfiniteScroll
@@ -201,17 +188,12 @@ function RegistryPage() {
                       setList={setSelectedItems} >
 
                         {selectedItems.map((item) => (
-                          <div className='item-row' key={item.id} onDragEnd={() => updateSortOrder()}>
-                            <div className='item-row__id'>{item.id}</div>
-                            <div className='item-row__name'>{item.name}</div>
-                            <div className='item-row__selection'>
-                              { <Checkbox 
-                                  checked={item.isSelected}
-                                  onChange={ () => toggleSelection(item) }>
-                                </Checkbox> 
-                              } 
-                            </div>
-                          </div>
+                          <Item 
+                            key={item.id} 
+                            item={item} 
+                            onCheckboxChange={toggleSelection}
+                            onDragEnd={() => updateSortOrder()}>
+                          </Item>
                         ))}
                       </ReactSortable>
                   </div>
