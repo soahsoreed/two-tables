@@ -48,6 +48,7 @@ const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
               <Input
                 type='text'
                 id="search-input"
+                value={name}
                 onChange={(e) => setName(e.target.value)}>
               </Input>
             </div>
@@ -56,7 +57,7 @@ const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
           <div className="add-item-modal__is-selected">
             <div className="add-item-modal__label">Выбран?</div>
             <div className="add-item-modal__checkbox">
-              <Checkbox onChange={() => setIsSelected(!isSelected)}></Checkbox>
+              <Checkbox  checked={isSelected} onChange={() => setIsSelected(!isSelected)}></Checkbox>
             </div>
           </div>
 

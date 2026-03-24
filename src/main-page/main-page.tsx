@@ -122,7 +122,11 @@ function RegistryPage() {
 
   return (
       <div className="main-page__container">
-        <NewItemModal isOpen={isModalOpen} handleOk={(item) => addNewItem(item)}></NewItemModal>
+        <NewItemModal 
+          isOpen={isModalOpen} 
+          handleOk={(item) => addNewItem(item)}
+          handleCancel={() => setIsModalOpen(false)}>
+        </NewItemModal>
 
         <div className="main-page__actions">
           <div className="main-page__actions-search">
