@@ -16,11 +16,18 @@ const NewItemModal = ({ isOpen, handleOk, handleCancel = () => {} }) => {
     const payload = { name, isSelected };
     handleOk(payload);
     setIsModalOpen(false);
+    clearData();
   }
 
   const cancel = () => {
     setIsModalOpen(false);
     handleCancel();
+    clearData();
+  }
+
+  const clearData = () => {
+    setIsSelected(false);
+    setName('');
   }
 
   return (

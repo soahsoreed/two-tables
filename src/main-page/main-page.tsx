@@ -61,7 +61,6 @@ function RegistryPage() {
 
   const toggleSelection = (item) => {
     const selectedNewValue = !item.isSelected;
-    debugger
 
     return fetch(`${baseUrl}/records/${item.id}`, {
       method: 'PUT',
@@ -106,6 +105,8 @@ function RegistryPage() {
   }
 
   const addNewItem = (item: IRecord) => {
+    setIsModalOpen(false);
+
     return fetch(`${baseUrl}/records`, {
       method: 'POST',
       headers: {
